@@ -1,5 +1,6 @@
 ﻿using EntityFrameworkExemplo1.Repository;
 using System;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -104,6 +105,33 @@ namespace EntityFrameworkExemplo1
                 produtoBindingSource.Remove(produto);
                 dgvCategorias.Refresh();
             }
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            string folderName = "c:\\Temp\\";
+            string fileName = Path.GetRandomFileName() + ".txt";
+            var pathString = Path.Combine(folderName, fileName);
+
+            if (!Directory.Exists(folderName))
+            {
+                Directory.CreateDirectory(folderName);
+            }
+
+            if (!File.Exists(pathString))
+            {
+                using (StreamWriter fs = new StreamWriter(pathString))
+                {
+                    using (var db = new ApplicationDBContext())
+                    {
+                        foreach (var item in db.Categorias.Where(cat => cat.idCategoria > 1).ToList())
+                        {
+                            fs.WriteLine($"{item.idCategoria} - {item.nome}");
+                        }  
+                    }
+                }
+            }
+
         }
     }
 }
